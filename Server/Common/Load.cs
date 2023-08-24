@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Common
 {
@@ -40,6 +41,19 @@ namespace Common
             AbsolutePercentageDeviation = absolutePercentageDeviation;
             SquaredDeviation = squaredDeviation;
             ImportedFileId = importedFileId;
+        }
+
+        //pretvaranje load podatka u XElement zbog cuvanja u xml datoteci
+        public XElement LoadToXElement()
+        {
+            return new XElement("row",
+                new XElement("TIME_STAMP", Timestamp),
+                new XElement("FORECAST_VALUE", ForecastValue),
+                new XElement("MEASURED_VALUE", MeasuredValue),
+                new XElement("ABSOLUTE_PERCENTAGE_DEVIATION", AbsolutePercentageDeviation),
+                new XElement("SQUARED_DEVIATION", SquaredDeviation),
+                new XElement("IMPORTED_FILE_ID", ImportedFileId)
+            );
         }
     }
 }

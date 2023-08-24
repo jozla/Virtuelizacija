@@ -13,6 +13,6 @@ namespace BazaPodataka
     {
         [OperationContract]
 
-        void UpisUBazu(List<Load> loadList, Audit audit);
+        void UpisUBazu(List<Load> loadList, Audit audit, int importedFileId, string nazivDatoteke);
     }
 }

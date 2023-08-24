@@ -14,7 +14,6 @@ namespace Server
     public class Servis : IServis
     {
         private int importedFileId = 100; // Inicijalni ID za prvu datoteku
-        private int auditId = 0;    //inicijalni ID za audit
         private int loadId = 0;     //inicijalni ID za load
         public void prijemDatoteke(MemoryStream datoteka, string nazivDatoteke)
         {
@@ -34,8 +33,7 @@ namespace Server
                 //ukoliko broj redova nije odgovarajuci greska
                 if (lines.Count < 23 || lines.Count > 25)
                 {
-                    audit = new Audit(auditId, DateTime.Now, MsgType.Error, $"U datoteci {nazivDatoteke} nalazi se neodgovarajući broj redova: {lines.Count}");
-                    auditId++;
+                    audit = new Audit(importedFileId, DateTime.Now, MsgType.Error, $"U datoteci {nazivDatoteke} nalazi se neodgovarajući broj redova: {lines.Count}");
                     importedFileId++;
                 }
                 //u suprotnom za svaki red obradjujemo podatke i kreiramo listu audit objekata
@@ -43,28 +41,55 @@ namespace Server
                 {
                     loadList = new List<Load>();
 
-                    foreach (string line in lines)
+                    if (nazivDatoteke.Contains("forecast"))
                     {
-                        string[] parts = line.Split(',');
-
-                        if (parts.Length >= 3)
+                        foreach (string line in lines)
                         {
-                            DateTime timestamp;
-                            if (DateTime.TryParse(parts[0] + " " + parts[1], out timestamp))
-                            {
-                                string forecastValue = parts[2];
-                                string measuredValue = "N/A";
-                                string absolutePercentageDeviation = "N/A";
-                                string squaredDeviation = "N/A";
+                            string[] parts = line.Split(',');
 
-                                Load load = new Load(loadId, timestamp, forecastValue, measuredValue, absolutePercentageDeviation, squaredDeviation, importedFileId);
-                                loadList.Add(load);
-                                loadId++;
+                            if (parts.Length >= 3)
+                            {
+                                DateTime timestamp;
+                                if (DateTime.TryParse(parts[0] + " " + parts[1], out timestamp))
+                                {
+                                    string forecastValue = parts[2];
+                                    string measuredValue = "N/A";
+                                    string absolutePercentageDeviation = "N/A";
+                                    string squaredDeviation = "N/A";
+
+                                    Load load = new Load(loadId, timestamp, forecastValue, measuredValue, absolutePercentageDeviation, squaredDeviation, importedFileId);
+                                    loadList.Add(load);
+                                    loadId++;
+                                }
                             }
                         }
                     }
-                    audit = new Audit(auditId, DateTime.Now, MsgType.Error, $"Datoteka {nazivDatoteke} je uspesno procitana");
-                    auditId++;
+
+                    if (nazivDatoteke.Contains("measured"))
+                    {
+                        foreach (string line in lines)
+                        {
+                            string[] parts = line.Split(',');
+
+                            if (parts.Length >= 3)
+                            {
+                                DateTime timestamp;
+                                if (DateTime.TryParse(parts[0] + " " + parts[1], out timestamp))
+                                {
+                                    string forecastValue = "N/A";
+                                    string measuredValue = parts[2];
+                                    string absolutePercentageDeviation = "N/A";
+                                    string squaredDeviation = "N/A";
+
+                                    Load load = new Load(loadId, timestamp, forecastValue, measuredValue, absolutePercentageDeviation, squaredDeviation, importedFileId);
+                                    loadList.Add(load);
+                                    loadId++;
+                                }
+                            }
+                        }
+                    }
+
+                    audit = new Audit(importedFileId, DateTime.Now, MsgType.Error, $"Datoteka {nazivDatoteke} je uspesno procitana");
                     importedFileId++;
                 }
 
@@ -72,7 +97,7 @@ namespace Server
                 ChannelFactory<IBazaPodataka> factory = new ChannelFactory<IBazaPodataka>("BazaPodataka");
                 IBazaPodataka channel = factory.CreateChannel();
 
-                channel.UpisUBazu(loadList, audit);
+                channel.UpisUBazu(loadList, audit, importedFileId, nazivDatoteke);
             }
         }
     }

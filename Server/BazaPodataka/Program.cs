@@ -14,7 +14,6 @@ namespace BazaPodataka
             ServiceHost svc = new ServiceHost(typeof(ServisBaze));
             svc.Open();
             Console.WriteLine("Baza je pokrenuta!!!");
-
             Console.ReadLine();
         }
     }

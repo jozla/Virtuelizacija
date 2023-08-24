@@ -1,0 +1,15 @@
+C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\Klijent\bin\Debug\Klijent.exe.config
+C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\Klijent\bin\Debug\Klijent.exe
+C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\Klijent\bin\Debug\Klijent.pdb
+C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\Klijent\bin\Debug\Server.exe
+C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\Klijent\bin\Debug\Server.pdb
+C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\Klijent\bin\Debug\Server.exe.config
+C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\Klijent\obj\Debug\Klijent.csproj.AssemblyReference.cache
+C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\Klijent\obj\Debug\Klijent.csproj.SuggestedBindingRedirects.cache
+C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\Klijent\obj\Debug\Klijent.csproj.CoreCompileInputs.cache
+C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\Klijent\obj\Debug\Klijent.csproj.CopyComplete
+C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\Klijent\obj\Debug\Klijent.exe
+C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\Klijent\obj\Debug\Klijent.pdb
+C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\Klijent\bin\Debug\BazaPodataka.exe
+C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\Klijent\bin\Debug\BazaPodataka.pdb
+C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\Klijent\bin\Debug\BazaPodataka.exe.config

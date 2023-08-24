@@ -1,0 +1,12 @@
+C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\bin\Debug\Server.exe.config
+C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\bin\Debug\Server.exe
+C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\bin\Debug\Server.pdb
+C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\obj\Debug\Server.csproj.AssemblyReference.cache
+C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\obj\Debug\Server.csproj.SuggestedBindingRedirects.cache
+C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\obj\Debug\Server.csproj.CoreCompileInputs.cache
+C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\obj\Debug\Server.exe
+C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\obj\Debug\Server.pdb
+C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\bin\Debug\BazaPodataka.exe
+C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\bin\Debug\BazaPodataka.pdb
+C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\bin\Debug\BazaPodataka.exe.config
+C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\obj\Debug\Server.csproj.CopyComplete

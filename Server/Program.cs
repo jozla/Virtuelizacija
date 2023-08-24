@@ -15,12 +15,6 @@ namespace Server
             ServiceHost svc = new ServiceHost(typeof(Servis));
             svc.Open();
             Console.WriteLine("Server je pokrenut!!!");
-
-            ChannelFactory<IBazaPodataka> factory = new ChannelFactory<IBazaPodataka>("BazaPodataka");
-            IBazaPodataka channel = factory.CreateChannel();
-
-            channel.UpisUBazu("baza");
-            Console.ReadLine();
             Console.ReadLine();
         }
     }

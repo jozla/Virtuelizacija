@@ -57,6 +57,10 @@
       <Project>{1132899D-E7D3-4AC6-9E89-5DB385A37513}</Project>
       <Name>BazaPodataka</Name>
     </ProjectReference>
+    <ProjectReference Include="Common\Common.csproj">
+      <Project>{EF746E65-FBE6-4DDE-9048-3189AECC334B}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.ServiceModel;
@@ -12,6 +13,6 @@ namespace BazaPodataka
     {
         [OperationContract]
 
-        void UpisUBazu(string text);
+        void UpisUBazu(List<Load> loadList, Audit audit);
     }
 }

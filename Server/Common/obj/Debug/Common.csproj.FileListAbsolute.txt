@@ -1,0 +1,6 @@
+C:\Users\zlatk\OneDrive\Desktop\Virtuelizacija\Server\Common\bin\Debug\Common.dll
+C:\Users\zlatk\OneDrive\Desktop\Virtuelizacija\Server\Common\bin\Debug\Common.pdb
+C:\Users\zlatk\OneDrive\Desktop\Virtuelizacija\Server\Common\obj\Debug\Common.csproj.AssemblyReference.cache
+C:\Users\zlatk\OneDrive\Desktop\Virtuelizacija\Server\Common\obj\Debug\Common.csproj.CoreCompileInputs.cache
+C:\Users\zlatk\OneDrive\Desktop\Virtuelizacija\Server\Common\obj\Debug\Common.dll
+C:\Users\zlatk\OneDrive\Desktop\Virtuelizacija\Server\Common\obj\Debug\Common.pdb

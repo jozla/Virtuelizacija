@@ -12,6 +12,6 @@ namespace Server
     public interface IServis
     {
         [OperationContract]
-        void prijemDatoteke(MemoryStream datoteka);
+        void prijemDatoteke(MemoryStream datoteka, string nazivDatoteke);
     }
 }

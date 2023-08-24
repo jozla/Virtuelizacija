@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,9 +9,9 @@ namespace BazaPodataka
 {
     public class ServisBaze : IBazaPodataka
     {
-        public void UpisUBazu(string text)
+        public void UpisUBazu(List<Load> loadList, Audit audit)
         {
-            Console.WriteLine(text);
+            
         }
     }
 }

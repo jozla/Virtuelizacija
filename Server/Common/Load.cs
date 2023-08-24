@@ -17,21 +17,21 @@ namespace Common
         public DateTime Timestamp { get; set; }
 
         [DataMember]
-        public double ForecastValue { get; set; }
+        public string ForecastValue { get; set; }
 
         [DataMember]
-        public double MeasuredValue { get; set; }
+        public string MeasuredValue { get; set; }
 
         [DataMember]
-        public double AbsolutePercentageDeviation { get; set; }
+        public string AbsolutePercentageDeviation { get; set; }
 
         [DataMember]
-        public double SquaredDeviation { get; set; }
+        public string SquaredDeviation { get; set; }
 
         [DataMember]
         public int ImportedFileId { get; set; }
 
-        public Load(int id, DateTime timestamp, double forecastValue, double measuredValue, double absolutePercentageDeviation, double squaredDeviation, int importedFileId)
+        public Load(int id, DateTime timestamp, string forecastValue, string measuredValue, string absolutePercentageDeviation, string squaredDeviation, int importedFileId)
         {
             Id = id;
             Timestamp = timestamp;

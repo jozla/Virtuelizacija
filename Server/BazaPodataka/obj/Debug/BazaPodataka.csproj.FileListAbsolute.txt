@@ -6,3 +6,14 @@ C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\BazaPodataka\obj\Debug\BazaPodat
 C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\BazaPodataka\obj\Debug\BazaPodataka.csproj.CoreCompileInputs.cache
 C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\BazaPodataka\obj\Debug\BazaPodataka.exe
 C:\Users\zlatk\OneDrive\Desktop\Projekat\Server\BazaPodataka\obj\Debug\BazaPodataka.pdb
+C:\Users\zlatk\OneDrive\Desktop\Virtuelizacija\Server\BazaPodataka\bin\Debug\BazaPodataka.exe.config
+C:\Users\zlatk\OneDrive\Desktop\Virtuelizacija\Server\BazaPodataka\bin\Debug\BazaPodataka.exe
+C:\Users\zlatk\OneDrive\Desktop\Virtuelizacija\Server\BazaPodataka\bin\Debug\BazaPodataka.pdb
+C:\Users\zlatk\OneDrive\Desktop\Virtuelizacija\Server\BazaPodataka\obj\Debug\BazaPodataka.csproj.AssemblyReference.cache
+C:\Users\zlatk\OneDrive\Desktop\Virtuelizacija\Server\BazaPodataka\obj\Debug\BazaPodataka.csproj.SuggestedBindingRedirects.cache
+C:\Users\zlatk\OneDrive\Desktop\Virtuelizacija\Server\BazaPodataka\obj\Debug\BazaPodataka.csproj.CoreCompileInputs.cache
+C:\Users\zlatk\OneDrive\Desktop\Virtuelizacija\Server\BazaPodataka\obj\Debug\BazaPodataka.exe
+C:\Users\zlatk\OneDrive\Desktop\Virtuelizacija\Server\BazaPodataka\obj\Debug\BazaPodataka.pdb
+C:\Users\zlatk\OneDrive\Desktop\Virtuelizacija\Server\BazaPodataka\bin\Debug\Common.dll
+C:\Users\zlatk\OneDrive\Desktop\Virtuelizacija\Server\BazaPodataka\bin\Debug\Common.pdb
+C:\Users\zlatk\OneDrive\Desktop\Virtuelizacija\Server\BazaPodataka\obj\Debug\BazaPodataka.csproj.CopyComplete

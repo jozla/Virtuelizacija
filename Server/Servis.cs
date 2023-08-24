@@ -1,7 +1,11 @@
-﻿using System;
+﻿using BazaPodataka;
+using Common;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,9 +13,67 @@ namespace Server
 {
     public class Servis : IServis
     {
-        public void prijemDatoteke(MemoryStream datoteka)
+        private int importedFileId = 100; // Inicijalni ID za prvu datoteku
+        private int auditId = 0;    //inicijalni ID za audit
+        private int loadId = 0;     //inicijalni ID za load
+        public void prijemDatoteke(MemoryStream datoteka, string nazivDatoteke)
         {
+            using (StreamReader reader = new StreamReader(datoteka))
+            {
+                List<string> lines = new List<string>();
+                Audit audit;
+                List<Load> loadList = new List<Load>();
 
+
+                //procitamo sve redove iz datoteke
+                while (!reader.EndOfStream)
+                {
+                    lines.Add(reader.ReadLine());
+                }
+
+                //ukoliko broj redova nije odgovarajuci greska
+                if (lines.Count < 23 || lines.Count > 25)
+                {
+                    audit = new Audit(auditId, DateTime.Now, MsgType.Error, $"U datoteci {nazivDatoteke} nalazi se neodgovarajući broj redova: {lines.Count}");
+                    auditId++;
+                    importedFileId++;
+                }
+                //u suprotnom za svaki red obradjujemo podatke i kreiramo listu audit objekata
+                else
+                {
+                    loadList = new List<Load>();
+
+                    foreach (string line in lines)
+                    {
+                        string[] parts = line.Split(',');
+
+                        if (parts.Length >= 3)
+                        {
+                            DateTime timestamp;
+                            if (DateTime.TryParse(parts[0] + " " + parts[1], out timestamp))
+                            {
+                                string forecastValue = parts[2];
+                                string measuredValue = "N/A";
+                                string absolutePercentageDeviation = "N/A";
+                                string squaredDeviation = "N/A";
+
+                                Load load = new Load(loadId, timestamp, forecastValue, measuredValue, absolutePercentageDeviation, squaredDeviation, importedFileId);
+                                loadList.Add(load);
+                                loadId++;
+                            }
+                        }
+                    }
+                    audit = new Audit(auditId, DateTime.Now, MsgType.Error, $"Datoteka {nazivDatoteke} je uspesno procitana");
+                    auditId++;
+                    importedFileId++;
+                }
+
+                //saljemo potrebne podatke radi upisa u bazu
+                ChannelFactory<IBazaPodataka> factory = new ChannelFactory<IBazaPodataka>("BazaPodataka");
+                IBazaPodataka channel = factory.CreateChannel();
+
+                channel.UpisUBazu(loadList, audit);
+            }
         }
     }
 }

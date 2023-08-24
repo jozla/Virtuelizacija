@@ -16,38 +16,40 @@ namespace Klijent
             ChannelFactory<IServis> factory = new ChannelFactory<IServis>("Servis");
             IServis channel = factory.CreateChannel();
 
-            Console.Write("Unesite putanju do foldera: ");
-            string putanja = Console.ReadLine();
-
-            //U slucaju da folder na toj putanji ne postoji ili nema csv datoteke
-            //trazimo ponovni unos
-            while (!Directory.Exists(putanja) || Directory.GetFiles(putanja, "*.csv").Length == 0)
+            while (true)
             {
-                Console.WriteLine("Folder nije ispravan. Unesite ponovo:");
-                putanja = Console.ReadLine();
-            }
+                Console.Write("Unesite putanju do foldera: ");
+                string putanja = Console.ReadLine();
 
-            string[] csvDatoteke = Directory.GetFiles(putanja, "*.csv");
-
-            //svaku datoteku pojedinacno putem MemoryStream saljemo na server
-            foreach (string csvDatoteka in csvDatoteke)
-            {
-                try
+                //U slucaju da folder na toj putanji ne postoji ili nema csv datoteke
+                //trazimo ponovni unos
+                while (!Directory.Exists(putanja) || Directory.GetFiles(putanja, "*.csv").Length == 0)
                 {
-                    using (MemoryStream stream = new MemoryStream(File.ReadAllBytes(csvDatoteka)))
+                    Console.WriteLine("Folder nije ispravan. Unesite ponovo:");
+                    putanja = Console.ReadLine();
+                }
+                string[] csvDatoteke = Directory.GetFiles(putanja, "*.csv");
+
+                //svaku datoteku pojedinacno putem MemoryStream saljemo na server
+                foreach (string csvDatoteka in csvDatoteke)
+                {
+                    try
                     {
-                        channel.prijemDatoteke(stream);
-                        Console.WriteLine($"Poslata datoteka: {Path.GetFileName(csvDatoteka)}");
+                        using (MemoryStream stream = new MemoryStream(File.ReadAllBytes(csvDatoteka)))
+                        {
+                            channel.prijemDatoteke(stream, Path.GetFileName(csvDatoteka));
+                            Console.WriteLine($"Poslata datoteka: {Path.GetFileName(csvDatoteka)}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Greška prilikom slanja datoteke {Path.GetFileName(csvDatoteka)}: {ex.Message}");
                     }
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Greška prilikom slanja datoteke {Path.GetFileName(csvDatoteka)}: {ex.Message}");
-                }
-            }
 
-            Console.WriteLine("Sve datoteke su poslate.");
-            Console.ReadLine();
+                Console.WriteLine("Sve datoteke su poslate.\n\n");
+            }
+            //Console.ReadLine();
         }
     }
 }

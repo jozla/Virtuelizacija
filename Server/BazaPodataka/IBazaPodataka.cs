@@ -13,6 +13,14 @@ namespace BazaPodataka
     {
         [OperationContract]
 
-        void UpisUBazu(List<Load> loadList, Audit audit, string nazivDatoteke, string tipBaze);
+        void UpisUXmlBazu(List<Load> loadList, Audit audit, string nazivDatoteke);
+
+        [OperationContract]
+
+        void UpisUInMemoryBazu(List<Load> loadList, Audit audit, string nazivDatoteke);
+
+        [OperationContract]
+        void CitanjeXmlBaze(out List<Load> loadList);
+
     }
 }

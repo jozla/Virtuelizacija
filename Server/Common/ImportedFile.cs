@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Common
 {
@@ -20,6 +21,14 @@ namespace Common
         {
             Id = id;
             FileName = fileName;
+        }
+
+        public XElement ImportedToXElement()
+        {
+            return new XElement("row",
+                new XElement("ID", Id),
+                new XElement("FILE_NAME", FileName)
+            );
         }
     }
 }

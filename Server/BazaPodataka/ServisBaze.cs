@@ -13,10 +13,13 @@ namespace BazaPodataka
 {
     public class ServisBaze : IBazaPodataka
     {
-        public void UpisUBazu(List<Load> loadList, Audit audit, int importedFileId, string nazivDatoteke)
+        public static Dictionary<int, Load> loadBaza = new Dictionary<int, Load>();
+        public Dictionary<int, Audit> auditBaza = new Dictionary<int, Audit>();
+        public Dictionary<int, ImportedFile> importedBaza = new Dictionary<int, ImportedFile>();
+        public void UpisUBazu(List<Load> loadList, Audit audit, int importedFileId, string nazivDatoteke, string tipBaze)
         {
             //ukoliko smo u podesavanjima izabrali xml bazu
-            if (ConfigurationManager.AppSettings["tipBaze"].Equals("xml"))
+            if (tipBaze.Equals("xml"))
             {
                 //uzimamo sve potrebne putanje
                 string putanjaLoad = ConfigurationManager.AppSettings["tblLoad"];
@@ -33,26 +36,26 @@ namespace BazaPodataka
                     XDocument loadDoc = XDocument.Load(putanjaLoad);
 
                     //za svaki dobijeni podatak
-                    foreach (Load newLoad in loadList)
+                    foreach (Load noviLoad in loadList)
                     {
                         //ako postoji podatak u bazi koji ima isti timestamp
-                        XElement existingLoadElement = loadDoc.Root.Elements("row")
-                            .FirstOrDefault(elem => (DateTime)elem.Element("TIME_STAMP") == newLoad.Timestamp);
+                        XElement postojeciLoadElement = loadDoc.Root.Elements("row")
+                            .FirstOrDefault(elem => (DateTime)elem.Element("TIME_STAMP") == noviLoad.Timestamp);
 
                         //azuriramo taj podatak
-                        if (existingLoadElement != null)
+                        if (postojeciLoadElement != null)
                         {
-                            existingLoadElement.Element("FORECAST_VALUE").Value = newLoad.ForecastValue;
-                            existingLoadElement.Element("MEASURED_VALUE").Value = newLoad.MeasuredValue;
-                            existingLoadElement.Element("ABSOLUTE_PERCENTAGE_DEVIATION").Value = newLoad.AbsolutePercentageDeviation;
-                            existingLoadElement.Element("SQUARED_DEVIATION").Value = newLoad.SquaredDeviation;
-                            existingLoadElement.Element("IMPORTED_FILE_ID").Value = newLoad.ImportedFileId.ToString();
+                            if(!noviLoad.ForecastValue.Equals("N/A"))
+                                postojeciLoadElement.Element("FORECAST_VALUE").Value = noviLoad.ForecastValue;
+                            if (!noviLoad.MeasuredValue.Equals("N/A"))
+                                postojeciLoadElement.Element("MEASURED_VALUE").Value = noviLoad.MeasuredValue;
+                            postojeciLoadElement.Element("IMPORTED_FILE_ID").Value = noviLoad.ImportedFileId.ToString();
                         }
                         else
                         {
                             // Dodamo novi element u suprotnom
-                            XElement newLoadElement = newLoad.LoadToXElement();
-                            loadDoc.Root.Add(newLoadElement);
+                            XElement noviLoadElement = noviLoad.LoadToXElement();
+                            loadDoc.Root.Add(noviLoadElement);
                         }
                     }
 
@@ -64,13 +67,79 @@ namespace BazaPodataka
                     XDocument loadDoc = new XDocument(new XElement("rows"));
 
                     //sve podatke cuvamo u datoteku
-                    foreach (Load newLoad in loadList)
+                    foreach (Load noviLoad in loadList)
                     {
-                        XElement newLoadElement = newLoad.LoadToXElement();
-                        loadDoc.Root.Add(newLoadElement);
+                        XElement noviLoadElement = noviLoad.LoadToXElement();
+                        loadDoc.Root.Add(noviLoadElement);
                     }
 
                     loadDoc.Save(putanjaLoad);
+                }
+
+                if (File.Exists(putanjaAudit))
+                {
+                    XDocument auditDoc = XDocument.Load(putanjaAudit);
+
+                    XElement noviAuditElement = audit.AuditToXElement();
+                    auditDoc.Root.Add(noviAuditElement);
+
+                    auditDoc.Save(putanjaAudit);
+                }
+                else
+                {
+                    XDocument auditDoc = new XDocument(new XElement("STAVKE"));
+
+                    XElement noviAuditElement = audit.AuditToXElement();
+                    auditDoc.Root.Add(noviAuditElement);
+
+                    auditDoc.Save(putanjaAudit);
+                }
+
+
+                if (File.Exists(putanjaImported))
+                {
+                    XDocument importedDoc = XDocument.Load(putanjaImported);
+
+                   
+                    XElement noviImportedFileElement = impf.ImportedToXElement();
+                    importedDoc.Root.Add(noviImportedFileElement);
+
+                    importedDoc.Save(putanjaImported);
+                }
+                else
+                {
+                    XDocument importedDoc = new XDocument(new XElement("STAVKE"));
+
+                    XElement noviImportedFileElement = impf.ImportedToXElement();
+                    importedDoc.Root.Add(noviImportedFileElement);
+                   
+                    importedDoc.Save(putanjaImported);
+                }
+            }
+
+            //ukoliko smo u podesavanjima izabrali inMemory bazu
+            if (tipBaze.Equals("inMemory"))
+            {
+                foreach (Load noviLoad in loadList)
+                {
+                    //provera da li postjoi objekat sa istim timestamp
+                    Load postojeciLoad = loadBaza.Values.FirstOrDefault(l => l.Timestamp == noviLoad.Timestamp);
+
+                    //ukoliko vec imamo objekat sa tim timestamp azuriramo samo njegovu vrednost
+                    if (postojeciLoad != null)
+                    {
+                        if (!noviLoad.ForecastValue.Equals("N/A"))
+                            postojeciLoad.ForecastValue = noviLoad.ForecastValue;
+                        if (!noviLoad.MeasuredValue.Equals("N/A"))
+                            postojeciLoad.MeasuredValue = noviLoad.MeasuredValue;
+                        postojeciLoad.ImportedFileId = noviLoad.ImportedFileId;
+                        loadBaza[postojeciLoad.Id] = postojeciLoad;
+                    }
+                    //u suprotnom dodajemo novi objekat
+                    else
+                    {
+                        loadBaza.Add(noviLoad.Id, noviLoad);
+                    }
                 }
             }
         }

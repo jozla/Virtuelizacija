@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace Common
 {
@@ -30,6 +31,16 @@ namespace Common
             Timestap = timestap;
             MessageType = messageType;
             Message = message;
+        }
+
+        public XElement AuditToXElement()
+        {
+            return new XElement("row",
+                new XElement("ID", Id),
+                new XElement("TIME_STAMP", Timestap),
+                new XElement("MESSAGE_TYPE", MessageType.ToString()),
+                new XElement("MESSAGE", Message)
+            );
         }
     }
 }

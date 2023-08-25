@@ -2,6 +2,7 @@
 using Common;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -39,6 +40,8 @@ namespace Server
                 //u suprotnom za svaki red obradjujemo podatke i kreiramo listu audit objekata
                 else
                 {
+                    if (lines[0].Split(',')[0].Equals("TIME_STAMP"))
+                        lines.RemoveAt(0);
                     loadList = new List<Load>();
 
                     if (nazivDatoteke.Contains("forecast"))
@@ -71,13 +74,14 @@ namespace Server
                         {
                             string[] parts = line.Split(',');
 
-                            if (parts.Length >= 3)
+                            if (parts.Length >= 2)
                             {
+                                string[] timestampParts = parts[0].Split(' ');
                                 DateTime timestamp;
-                                if (DateTime.TryParse(parts[0] + " " + parts[1], out timestamp))
+                                if (DateTime.TryParse(timestampParts[0] + " " + timestampParts[1], out timestamp))
                                 {
                                     string forecastValue = "N/A";
-                                    string measuredValue = parts[2];
+                                    string measuredValue = parts[1];
                                     string absolutePercentageDeviation = "N/A";
                                     string squaredDeviation = "N/A";
 
@@ -89,7 +93,7 @@ namespace Server
                         }
                     }
 
-                    audit = new Audit(importedFileId, DateTime.Now, MsgType.Error, $"Datoteka {nazivDatoteke} je uspesno procitana");
+                    audit = new Audit(importedFileId, DateTime.Now, MsgType.Info, $"Datoteka {nazivDatoteke} je uspesno procitana");
                     importedFileId++;
                 }
 
@@ -97,7 +101,12 @@ namespace Server
                 ChannelFactory<IBazaPodataka> factory = new ChannelFactory<IBazaPodataka>("BazaPodataka");
                 IBazaPodataka channel = factory.CreateChannel();
 
-                channel.UpisUBazu(loadList, audit, importedFileId, nazivDatoteke);
+                //u odnosu na izabrani tip baze u App.config fajlu pozivamo metodu za upis
+                if(ConfigurationManager.AppSettings["tipBaze"].Equals("xml"))
+                    channel.UpisUBazu(loadList, audit, importedFileId, nazivDatoteke, "xml");
+
+                if (ConfigurationManager.AppSettings["tipBaze"].Equals("inMemory"))
+                    channel.UpisUBazu(loadList, audit, importedFileId, nazivDatoteke, "inMemory");
             }
         }
     }

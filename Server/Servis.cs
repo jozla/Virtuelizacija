@@ -14,7 +14,7 @@ namespace Server
 {
     public class Servis : IServis
     {
-        private int importedFileId = 100; // Inicijalni ID za prvu datoteku
+        private int importedFileId = 100; // Inicijalni ID za importedFile i Audit
         private int loadId = 0;     //inicijalni ID za load
         public void prijemDatoteke(MemoryStream datoteka, string nazivDatoteke)
         {
@@ -31,23 +31,30 @@ namespace Server
                     lines.Add(reader.ReadLine());
                 }
 
-                //ukoliko broj redova nije odgovarajuci greska
+                //ukoliko broj redova nije odgovarajuci greska i kreiramo audit objekat
                 if (lines.Count < 23 || lines.Count > 25)
                 {
                     audit = new Audit(importedFileId, DateTime.Now, MsgType.Error, $"U datoteci {nazivDatoteke} nalazi se neodgovarajući broj redova: {lines.Count}");
                     importedFileId++;
                 }
+
                 //u suprotnom za svaki red obradjujemo podatke i kreiramo listu audit objekata
                 else
                 {
+                    //zbog razlike u datotekama
                     if (lines[0].Split(',')[0].Equals("TIME_STAMP"))
                         lines.RemoveAt(0);
-                    loadList = new List<Load>();
 
+                    loadList = new List<Load>();
+                    
+                    //ako je forecast datoteka upisujemo forecast vrednost
+                    //u novi load objekat
                     if (nazivDatoteke.Contains("forecast"))
                     {
                         foreach (string line in lines)
                         {
+                            //izgled reda u datoteci datum,vreme,vrednost
+                            //parsiramo po zarezu i dalje rukujemo podacima
                             string[] parts = line.Split(',');
 
                             if (parts.Length >= 3)
@@ -68,10 +75,14 @@ namespace Server
                         }
                     }
 
+                    //ako je measured datoteka upisujemo measured vrednost
+                    //u novi load objekat
                     if (nazivDatoteke.Contains("measured"))
                     {
                         foreach (string line in lines)
                         {
+                            //izgled reda u datoteci datum vreme,vrednost
+                            //parsiramo po zarezu i dalje rukujemo podacima
                             string[] parts = line.Split(',');
 
                             if (parts.Length >= 2)
@@ -92,7 +103,7 @@ namespace Server
                             }
                         }
                     }
-
+                    //audit o uspesnom kreiranju datoteke
                     audit = new Audit(importedFileId, DateTime.Now, MsgType.Info, $"Datoteka {nazivDatoteke} je uspesno procitana");
                     importedFileId++;
                 }
@@ -103,10 +114,10 @@ namespace Server
 
                 //u odnosu na izabrani tip baze u App.config fajlu pozivamo metodu za upis
                 if(ConfigurationManager.AppSettings["tipBaze"].Equals("xml"))
-                    channel.UpisUBazu(loadList, audit, importedFileId, nazivDatoteke, "xml");
+                    channel.UpisUBazu(loadList, audit, nazivDatoteke, "xml");
 
                 if (ConfigurationManager.AppSettings["tipBaze"].Equals("inMemory"))
-                    channel.UpisUBazu(loadList, audit, importedFileId, nazivDatoteke, "inMemory");
+                    channel.UpisUBazu(loadList, audit, nazivDatoteke, "inMemory");
             }
         }
     }

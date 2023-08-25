@@ -23,6 +23,7 @@ namespace Common
             FileName = fileName;
         }
 
+        //metodda za pretvaranje importedFile objekta u XElement zbog cuvanja u xml datoteci
         public XElement ImportedToXElement()
         {
             return new XElement("row",

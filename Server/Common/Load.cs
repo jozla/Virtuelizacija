@@ -43,7 +43,7 @@ namespace Common
             ImportedFileId = importedFileId;
         }
 
-        //metodda za pretvaranje load podatka u XElement zbog cuvanja u xml datoteci
+        //metodda za pretvaranje load objekta u XElement zbog cuvanja u xml datoteci
         public XElement LoadToXElement()
         {
             return new XElement("row",

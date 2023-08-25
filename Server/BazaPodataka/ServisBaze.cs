@@ -16,8 +16,11 @@ namespace BazaPodataka
         public static Dictionary<int, Load> loadBaza = new Dictionary<int, Load>();
         public Dictionary<int, Audit> auditBaza = new Dictionary<int, Audit>();
         public Dictionary<int, ImportedFile> importedBaza = new Dictionary<int, ImportedFile>();
-        public void UpisUBazu(List<Load> loadList, Audit audit, int importedFileId, string nazivDatoteke, string tipBaze)
+        public void UpisUBazu(List<Load> loadList, Audit audit, string nazivDatoteke, string tipBaze)
         {
+            //kreiramo importedFile
+            ImportedFile impf = new ImportedFile(audit.Id, nazivDatoteke);
+
             //ukoliko smo u podesavanjima izabrali xml bazu
             if (tipBaze.Equals("xml"))
             {
@@ -25,9 +28,6 @@ namespace BazaPodataka
                 string putanjaLoad = ConfigurationManager.AppSettings["tblLoad"];
                 string putanjaAudit = ConfigurationManager.AppSettings["tblAudit"];
                 string putanjaImported = ConfigurationManager.AppSettings["tblImported"];
-
-                //kreiramo importedFile
-                ImportedFile impf = new ImportedFile(importedFileId, nazivDatoteke);
 
                 //ukoliko vec imamo datoteku u kojoj se cuvaju podaci
                 if (File.Exists(putanjaLoad))
@@ -76,6 +76,7 @@ namespace BazaPodataka
                     loadDoc.Save(putanjaLoad);
                 }
 
+                //ako postoji audit xml datoteka ucitavamo je i dodajemo novi element
                 if (File.Exists(putanjaAudit))
                 {
                     XDocument auditDoc = XDocument.Load(putanjaAudit);
@@ -85,6 +86,7 @@ namespace BazaPodataka
 
                     auditDoc.Save(putanjaAudit);
                 }
+                //ukoliko ne postoji pravimo novu
                 else
                 {
                     XDocument auditDoc = new XDocument(new XElement("STAVKE"));
@@ -95,7 +97,7 @@ namespace BazaPodataka
                     auditDoc.Save(putanjaAudit);
                 }
 
-
+                //isto kao kod audit datoteke ako postoji ucitavamo je i dodajemo
                 if (File.Exists(putanjaImported))
                 {
                     XDocument importedDoc = XDocument.Load(putanjaImported);
@@ -106,6 +108,7 @@ namespace BazaPodataka
 
                     importedDoc.Save(putanjaImported);
                 }
+                //ukoliko ne postoji pravimo novu
                 else
                 {
                     XDocument importedDoc = new XDocument(new XElement("STAVKE"));
@@ -141,6 +144,10 @@ namespace BazaPodataka
                         loadBaza.Add(noviLoad.Id, noviLoad);
                     }
                 }
+
+                //upis audit i importedFile objekata
+                auditBaza.Add(audit.Id, audit);
+                importedBaza.Add(audit.Id, impf);
             }
         }
     }

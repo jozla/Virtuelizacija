@@ -33,6 +33,7 @@ namespace Common
             Message = message;
         }
 
+        //metodda za pretvaranje audit objekta u XElement zbog cuvanja u xml datoteci
         public XElement AuditToXElement()
         {
             return new XElement("row",

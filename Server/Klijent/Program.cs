@@ -28,6 +28,8 @@ namespace Klijent
                     Console.WriteLine("Folder nije ispravan. Unesite ponovo:");
                     putanja = Console.ReadLine();
                 }
+
+                //sve csv datoteke u datom folderu
                 string[] csvDatoteke = Directory.GetFiles(putanja, "*.csv");
 
                 //svaku datoteku pojedinacno putem MemoryStream saljemo na server

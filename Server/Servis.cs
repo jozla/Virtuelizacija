@@ -16,9 +16,7 @@ namespace Server
     {
         private int importedFileId = 100; // Inicijalni ID za importedFile i Audit
         private int loadId = 0;     //inicijalni ID za load
-        //koriste se da bi znali da li su svi potrebni podaci procitani
-        private bool forecast = false;
-        private bool measured = false;
+        
         public void prijemDatoteke(MemoryStream datoteka, string nazivDatoteke)
         {
             using (StreamReader reader = new StreamReader(datoteka))
@@ -76,8 +74,6 @@ namespace Server
                                 }
                             }
                         }
-                        //uspesno smo poslali forecast podatke
-                        forecast = true;
                     }
 
                     //ako je measured datoteka upisujemo measured vrednost
@@ -107,8 +103,6 @@ namespace Server
                                 }
                             }
                         }
-                        //uspesno smo poslali measured podatke
-                        measured = true;
                     }
                     //audit o uspesnom kreiranju datoteke
                     audit = new Audit(importedFileId, DateTime.Now, MsgType.Info, $"Datoteka {nazivDatoteke} je uspesno procitana");
@@ -125,17 +119,51 @@ namespace Server
 
                 if (ConfigurationManager.AppSettings["tipBaze"].Equals("inMemory"))
                     channel.UpisUInMemoryBazu(loadList, audit, nazivDatoteke);
-
-                //kada znamo da su upisane i forecast i measured vrednosti
-                if (forecast && measured)
-                {
-                    //citamo podatke iz odgovarajuce baze
-                    if (ConfigurationManager.AppSettings["tipBaze"].Equals("xml"))
-                    {
-                        channel.CitanjeXmlBaze(out List<Load> procitaniPodaci);
-                    }
-                }
             }
         }
+
+        public void sviPodaciUcitani()
+        {
+           //saljemo potrebne podatke radi upisa u bazu
+           ChannelFactory<IBazaPodataka> factory = new ChannelFactory<IBazaPodataka>("BazaPodataka");
+           IBazaPodataka channel = factory.CreateChannel();
+
+           //citamo podatke iz odgovarajuce baze
+           if (ConfigurationManager.AppSettings["tipBaze"].Equals("xml"))
+           {
+               channel.CitanjeXmlBaze(out List<Load> procitaniPodaci);
+
+               //izvrsenje proracuna za svaki podatak
+               foreach (Load podatak in procitaniPodaci)
+               {
+                   //proracun vrsimo samo ako imamo sve potrebne vrednosti
+                   if (!podatak.ForecastValue.Equals("N/A") && !podatak.MeasuredValue.Equals("N/A"))
+                   {
+                       double measuredValue = double.Parse(podatak.MeasuredValue);
+                       double forecastValue = double.Parse(podatak.ForecastValue);
+
+                       //ako je u App.config izabrano racunanje apsolutnog procentualnog odstupanja
+                       if (ConfigurationManager.AppSettings["tipRacunanja"].Equals("abs"))
+                       {
+                           double absolutePercentageDeviation = (Math.Abs(measuredValue - forecastValue) / measuredValue) * 100;
+                           podatak.AbsolutePercentageDeviation = absolutePercentageDeviation.ToString();
+                       }
+
+                       if (ConfigurationManager.AppSettings["tipRacunanja"].Equals("sqr"))
+                       {
+                           double SquaredDeviation = Math.Pow((measuredValue - forecastValue) / measuredValue, 2);
+                           podatak.SquaredDeviation = SquaredDeviation.ToString();
+                       }
+                   }
+               }
+
+               channel.UpisUXmlBazu(procitaniPodaci, null, "");
+           }
+
+           if(ConfigurationManager.AppSettings["tipBaze"].Equals("inMemory"))
+           {
+
+           }
+        } 
     }
 }

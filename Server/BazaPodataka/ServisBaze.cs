@@ -19,7 +19,13 @@ namespace BazaPodataka
  
         public void UpisUXmlBazu(List<Load> loadList, Audit audit, string nazivDatoteke)
         {
-            ImportedFile impf = new ImportedFile(audit.Id, nazivDatoteke);
+            ImportedFile impf = null;
+            //kreiramo imported file ako ucitavamo datoteke
+            //u suportnom ne kreiramo zato sto samo azuriramo load bazu
+            if (!nazivDatoteke.Equals(""))
+                impf = new ImportedFile(audit.Id, nazivDatoteke);
+            
+
             //uzimamo sve potrebne putanje
             string putanjaLoad = ConfigurationManager.AppSettings["tblLoad"];
             string putanjaAudit = ConfigurationManager.AppSettings["tblAudit"];
@@ -76,48 +82,52 @@ namespace BazaPodataka
                 loadDoc.Save(putanjaLoad);
             }
 
-            //ako postoji audit xml datoteka ucitavamo je i dodajemo novi element
-            if (File.Exists(putanjaAudit))
+            //ako ucitavamo datoteku onda imamo upis u audit i importedFile bazu
+            if (audit != null && impf != null)
             {
-                XDocument auditDoc = XDocument.Load(putanjaAudit);
+                //ako postoji audit xml datoteka ucitavamo je i dodajemo novi element
+                if (File.Exists(putanjaAudit))
+                {
+                    XDocument auditDoc = XDocument.Load(putanjaAudit);
 
-                XElement noviAuditElement = audit.AuditToXElement();
-                auditDoc.Root.Add(noviAuditElement);
+                    XElement noviAuditElement = audit.AuditToXElement();
+                    auditDoc.Root.Add(noviAuditElement);
 
-                auditDoc.Save(putanjaAudit);
-            }
-            //ukoliko ne postoji pravimo novu
-            else
-            {
-                XDocument auditDoc = new XDocument(new XElement("STAVKE"));
+                    auditDoc.Save(putanjaAudit);
+                }
+                //ukoliko ne postoji pravimo novu
+                else
+                {
+                    XDocument auditDoc = new XDocument(new XElement("STAVKE"));
 
-                XElement noviAuditElement = audit.AuditToXElement();
-                auditDoc.Root.Add(noviAuditElement);
+                    XElement noviAuditElement = audit.AuditToXElement();
+                    auditDoc.Root.Add(noviAuditElement);
 
-                auditDoc.Save(putanjaAudit);
-            }
+                    auditDoc.Save(putanjaAudit);
+                }
 
-            //isto kao kod audit datoteke ako postoji ucitavamo je i dodajemo
-            if (File.Exists(putanjaImported))
-            {
-                XDocument importedDoc = XDocument.Load(putanjaImported);
+                //isto kao kod audit datoteke ako postoji ucitavamo je i dodajemo
+                if (File.Exists(putanjaImported))
+                {
+                    XDocument importedDoc = XDocument.Load(putanjaImported);
 
 
-                XElement noviImportedFileElement = impf.ImportedToXElement();
-                importedDoc.Root.Add(noviImportedFileElement);
+                    XElement noviImportedFileElement = impf.ImportedToXElement();
+                    importedDoc.Root.Add(noviImportedFileElement);
 
-                importedDoc.Save(putanjaImported);
-            }
-            //ukoliko ne postoji pravimo novu
-            else
-            {
-                XDocument importedDoc = new XDocument(new XElement("STAVKE"));
+                    importedDoc.Save(putanjaImported);
+                }
+                //ukoliko ne postoji pravimo novu
+                else
+                {
+                    XDocument importedDoc = new XDocument(new XElement("STAVKE"));
 
-                XElement noviImportedFileElement = impf.ImportedToXElement();
-                importedDoc.Root.Add(noviImportedFileElement);
+                    XElement noviImportedFileElement = impf.ImportedToXElement();
+                    importedDoc.Root.Add(noviImportedFileElement);
 
-                importedDoc.Save(putanjaImported);
-            }
+                    importedDoc.Save(putanjaImported);
+                }
+            }           
     }
         public void UpisUInMemoryBazu(List<Load> loadList, Audit audit, string nazivDatoteke)
         {

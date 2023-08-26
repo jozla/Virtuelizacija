@@ -15,6 +15,9 @@ namespace Klijent
         {
             ChannelFactory<IServis> factory = new ChannelFactory<IServis>("Servis");
             IServis channel = factory.CreateChannel();
+            //koriste se da bi znali da li su svi potrebni podaci procitani
+            bool forecast = false;
+            bool measured = false;
 
             while (true)
             {
@@ -40,6 +43,10 @@ namespace Klijent
                         using (MemoryStream stream = new MemoryStream(File.ReadAllBytes(csvDatoteka)))
                         {
                             channel.prijemDatoteke(stream, Path.GetFileName(csvDatoteka));
+                            if (Path.GetFileName(csvDatoteka).Contains("measured"))
+                                measured = true;
+                            if (Path.GetFileName(csvDatoteka).Contains("forecast"))
+                                forecast = true;
                             Console.WriteLine($"Poslata datoteka: {Path.GetFileName(csvDatoteka)}");
                         }
                     }
@@ -50,8 +57,10 @@ namespace Klijent
                 }
 
                 Console.WriteLine("Sve datoteke su poslate.\n\n");
+                //ako smo ucitali sve potrebne podatke prelazimo na proracun
+                if(measured && forecast)
+                    channel.sviPodaciUcitani();
             }
-            //Console.ReadLine();
         }
     }
 }

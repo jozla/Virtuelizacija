@@ -13,5 +13,9 @@ namespace Server
     {
         [OperationContract]
         void prijemDatoteke(MemoryStream datoteka, string nazivDatoteke);
+
+        [OperationContract]
+        void sviPodaciUcitani();
+
     }
 }

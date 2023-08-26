@@ -22,5 +22,8 @@ namespace BazaPodataka
         [OperationContract]
         void CitanjeXmlBaze(out List<Load> loadList);
 
+        [OperationContract]
+        void CitanjeInMemoryBaze(out List<Load> loadList);
+
     }
 }

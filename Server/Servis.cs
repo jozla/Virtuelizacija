@@ -124,46 +124,44 @@ namespace Server
 
         public void sviPodaciUcitani()
         {
-           //saljemo potrebne podatke radi upisa u bazu
-           ChannelFactory<IBazaPodataka> factory = new ChannelFactory<IBazaPodataka>("BazaPodataka");
-           IBazaPodataka channel = factory.CreateChannel();
+            //saljemo potrebne podatke radi upisa u bazu
+            ChannelFactory<IBazaPodataka> factory = new ChannelFactory<IBazaPodataka>("BazaPodataka");
+            IBazaPodataka channel = factory.CreateChannel();
 
-           //citamo podatke iz odgovarajuce baze
-           if (ConfigurationManager.AppSettings["tipBaze"].Equals("xml"))
-           {
-               channel.CitanjeXmlBaze(out List<Load> procitaniPodaci);
+            List<Load> procitaniPodaci = null;
 
-               //izvrsenje proracuna za svaki podatak
-               foreach (Load podatak in procitaniPodaci)
-               {
-                   //proracun vrsimo samo ako imamo sve potrebne vrednosti
-                   if (!podatak.ForecastValue.Equals("N/A") && !podatak.MeasuredValue.Equals("N/A"))
-                   {
-                       double measuredValue = double.Parse(podatak.MeasuredValue);
-                       double forecastValue = double.Parse(podatak.ForecastValue);
+            //citamo podatke iz odgovarajuce baze
+            if (ConfigurationManager.AppSettings["tipBaze"].Equals("xml"))
+               channel.CitanjeXmlBaze(out procitaniPodaci);
+            if (ConfigurationManager.AppSettings["tipBaze"].Equals("inMemory"))
+                channel.CitanjeInMemoryBaze(out procitaniPodaci);
 
-                       //ako je u App.config izabrano racunanje apsolutnog procentualnog odstupanja
-                       if (ConfigurationManager.AppSettings["tipRacunanja"].Equals("abs"))
-                       {
-                           double absolutePercentageDeviation = (Math.Abs(measuredValue - forecastValue) / measuredValue) * 100;
-                           podatak.AbsolutePercentageDeviation = absolutePercentageDeviation.ToString();
-                       }
+            //izvrsenje proracuna za svaki podatak
+            foreach (Load podatak in procitaniPodaci)
+            {
+                //proracun vrsimo samo ako imamo sve potrebne vrednosti
+                if (!podatak.ForecastValue.Equals("N/A") && !podatak.MeasuredValue.Equals("N/A"))
+                {
+                    double measuredValue = double.Parse(podatak.MeasuredValue);
+                    double forecastValue = double.Parse(podatak.ForecastValue);
 
-                       if (ConfigurationManager.AppSettings["tipRacunanja"].Equals("sqr"))
-                       {
-                           double SquaredDeviation = Math.Pow((measuredValue - forecastValue) / measuredValue, 2);
-                           podatak.SquaredDeviation = SquaredDeviation.ToString();
-                       }
-                   }
-               }
+                    //ako je u App.config izabrano racunanje apsolutnog procentualnog odstupanja
+                    if (ConfigurationManager.AppSettings["tipRacunanja"].Equals("abs"))
+                    {
+                        double absolutePercentageDeviation = (Math.Abs(measuredValue - forecastValue) / measuredValue) * 100;
+                        podatak.AbsolutePercentageDeviation = absolutePercentageDeviation.ToString();
+                    }
 
-               channel.UpisUXmlBazu(procitaniPodaci, null, "");
-           }
+                    //ako je u App.config izabrano racunanje kvadratnog odstupanja
+                    if (ConfigurationManager.AppSettings["tipRacunanja"].Equals("sqr"))
+                    {
+                        double SquaredDeviation = Math.Pow((measuredValue - forecastValue) / measuredValue, 2);
+                        podatak.SquaredDeviation = SquaredDeviation.ToString();
+                    }
+                }
+            }
 
-           if(ConfigurationManager.AppSettings["tipBaze"].Equals("inMemory"))
-           {
-
-           }
+            channel.UpisUXmlBazu(procitaniPodaci, null, "");       
         } 
     }
 }

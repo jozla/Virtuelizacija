@@ -195,5 +195,14 @@ namespace BazaPodataka
                 xmlId++;
             }
         }
+
+        public void CitanjeInMemoryBaze(out List<Load> loadList)
+        {
+            loadList = new List<Load>();
+            foreach(Load podatak in loadBaza.Values)
+            {
+                loadList.Add(podatak);
+            }
+        }
     }
 }

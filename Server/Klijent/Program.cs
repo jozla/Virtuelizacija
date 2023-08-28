@@ -15,6 +15,7 @@ namespace Klijent
         {
             ChannelFactory<IServis> factory = new ChannelFactory<IServis>("Servis");
             IServis channel = factory.CreateChannel();
+
             //koriste se da bi znali da li su svi potrebni podaci procitani
             bool forecast = false;
             bool measured = false;

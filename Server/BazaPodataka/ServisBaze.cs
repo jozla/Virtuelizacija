@@ -131,7 +131,12 @@ namespace BazaPodataka
     }
         public void UpisUInMemoryBazu(List<Load> loadList, Audit audit, string nazivDatoteke)
         {
-            ImportedFile impf = new ImportedFile(audit.Id, nazivDatoteke);
+            //kreiramo imported file ako ucitavamo datoteke
+            //u suportnom ne kreiramo zato sto samo azuriramo load bazu
+            ImportedFile impf = null;
+            if (!nazivDatoteke.Equals(""))
+                impf = new ImportedFile(audit.Id, nazivDatoteke);
+
             foreach (Load noviLoad in loadList)
             {
                 //provera da li postjoi objekat sa istim timestamp
@@ -159,9 +164,13 @@ namespace BazaPodataka
                 }
             }
 
-            //upis audit i importedFile objekata
-            auditBaza.Add(audit.Id, audit);
-            importedBaza.Add(audit.Id, impf);
+            //ako ucitavamo datoteku onda imamo upis u audit i importedFile bazu
+            if (audit != null && impf != null)
+            {
+                //upis audit i importedFile objekata
+                auditBaza.Add(audit.Id, audit);
+                importedBaza.Add(audit.Id, impf);
+            }
         }
 
         //inicijalni id za load objekte

@@ -12,11 +12,14 @@ using System.Threading.Tasks;
 
 namespace Server
 {
+    //delegat za upis proracunatih podataka u bazu
+    public delegate void AzuriranjeHandler(List<Load> loadList, out string uspesnoUpisivanje);
     public class Servis : IServis
     {
+
         private int importedFileId = 100; // Inicijalni ID za importedFile i Audit
         private int loadId = 0;     //inicijalni ID za load
-        
+
         public void prijemDatoteke(MemoryStream datoteka, string nazivDatoteke)
         {
             using (StreamReader reader = new StreamReader(datoteka))
@@ -124,7 +127,7 @@ namespace Server
 
         public void sviPodaciUcitani()
         {
-            //saljemo potrebne podatke radi upisa u bazu
+            //otvaramo kanal radi citanja iz baze
             ChannelFactory<IBazaPodataka> factory = new ChannelFactory<IBazaPodataka>("BazaPodataka");
             IBazaPodataka channel = factory.CreateChannel();
 
@@ -161,7 +164,63 @@ namespace Server
                 }
             }
 
-            channel.UpisUXmlBazu(procitaniPodaci, null, "");       
-        } 
+            //pravimo event koji poziva metodu za upis u xml bazu
+            //kada je proracunavanje podataka zavrseno
+            EventClass ev = new EventClass();
+
+            //pretplatimo se na odgovarajucu metodu
+            //u zavisnosti od toga koja je baza izabrana u App.config
+            if (ConfigurationManager.AppSettings["tipBaze"].Equals("xml"))
+                ev.AzuriranjeEvent += AzuriranjeXmlBaze;
+            if (ConfigurationManager.AppSettings["tipBaze"].Equals("inMemory"))
+                ev.AzuriranjeEvent += AzuriranjeInMemoryBaze;
+
+            ev.pokreniEvent(procitaniPodaci);
+
+            //otkazivanje pretplate
+            if (ConfigurationManager.AppSettings["tipBaze"].Equals("xml"))
+                ev.AzuriranjeEvent -= AzuriranjeXmlBaze;
+            if (ConfigurationManager.AppSettings["tipBaze"].Equals("inMemory"))
+                ev.AzuriranjeEvent -= AzuriranjeInMemoryBaze;
+        }
+
+        //metoda koja se pokrece pomocu eventa i delegata
+        public void AzuriranjeXmlBaze(List<Load> loadList, out string uspesnoUpisivanje)
+        {
+            //saljemo potrebne podatke radi azuriranja baze
+            ChannelFactory<IBazaPodataka> factory = new ChannelFactory<IBazaPodataka>("BazaPodataka");
+            IBazaPodataka channel = factory.CreateChannel();
+            channel.UpisUXmlBazu(loadList, null, "");
+
+            uspesnoUpisivanje =  "Xml baza uspesno azurirana";
+        }
+
+        //metoda koja se pokrece pomocu eventa i delegata
+        public void AzuriranjeInMemoryBaze(List<Load> loadList, out string uspesnoUpisivanje)
+        {
+            //saljemo potrebne podatke radi azuriranja baze
+            ChannelFactory<IBazaPodataka> factory = new ChannelFactory<IBazaPodataka>("BazaPodataka");
+            IBazaPodataka channel = factory.CreateChannel();
+            channel.UpisUInMemoryBazu(loadList, null, "");
+
+            uspesnoUpisivanje =  "InMemory baza uspesno azurirana";
+        }
+    }
+
+    //klasa u kojoj definisemo event
+    public class EventClass
+    {
+        public event AzuriranjeHandler AzuriranjeEvent;
+
+        //metoda za pokretanje eventa
+        public void pokreniEvent(List<Load> loadList)
+        {
+            if(AzuriranjeEvent != null)
+            {
+                string uspesnoUpisivanje;
+                AzuriranjeEvent(loadList, out uspesnoUpisivanje);
+                Console.WriteLine(uspesnoUpisivanje);
+            }
+        }
     }
 }

@@ -12,8 +12,6 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    //delegat za upis proracunatih podataka u bazu
-    public delegate void AzuriranjeHandler(List<Load> loadList, out string uspesnoUpisivanje);
     public class Servis : IServis
     {
 
@@ -192,7 +190,7 @@ namespace Server
             IBazaPodataka channel = factory.CreateChannel();
             channel.UpisUXmlBazu(loadList, null, "");
 
-            uspesnoUpisivanje =  "Xml baza uspesno azurirana";
+            uspesnoUpisivanje =  "Podaci proracunati i Xml baza uspesno azurirana";
         }
 
         //metoda koja se pokrece pomocu eventa i delegata
@@ -203,24 +201,7 @@ namespace Server
             IBazaPodataka channel = factory.CreateChannel();
             channel.UpisUInMemoryBazu(loadList, null, "");
 
-            uspesnoUpisivanje =  "InMemory baza uspesno azurirana";
-        }
-    }
-
-    //klasa u kojoj definisemo event
-    public class EventClass
-    {
-        public event AzuriranjeHandler AzuriranjeEvent;
-
-        //metoda za pokretanje eventa
-        public void pokreniEvent(List<Load> loadList)
-        {
-            if(AzuriranjeEvent != null)
-            {
-                string uspesnoUpisivanje;
-                AzuriranjeEvent(loadList, out uspesnoUpisivanje);
-                Console.WriteLine(uspesnoUpisivanje);
-            }
+            uspesnoUpisivanje = "Podaci proracunati i InMemory baza uspesno azurirana";
         }
     }
 }

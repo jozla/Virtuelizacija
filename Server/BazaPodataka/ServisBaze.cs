@@ -14,8 +14,8 @@ namespace BazaPodataka
     public class ServisBaze : IBazaPodataka
     {
         public static Dictionary<int, Load> loadBaza = new Dictionary<int, Load>();
-        public Dictionary<int, Audit> auditBaza = new Dictionary<int, Audit>();
-        public Dictionary<int, ImportedFile> importedBaza = new Dictionary<int, ImportedFile>();
+        public static Dictionary<int, Audit> auditBaza = new Dictionary<int, Audit>();
+        public static Dictionary<int, ImportedFile> importedBaza = new Dictionary<int, ImportedFile>();
  
         public void UpisUXmlBazu(List<Load> loadList, Audit audit, string nazivDatoteke)
         {
@@ -170,6 +170,11 @@ namespace BazaPodataka
                 //upis audit i importedFile objekata
                 auditBaza.Add(audit.Id, audit);
                 importedBaza.Add(audit.Id, impf);
+            }
+            
+            if(audit == null)
+            {
+                Console.WriteLine(1);
             }
         }
 

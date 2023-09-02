@@ -137,6 +137,7 @@ namespace Server
             if (ConfigurationManager.AppSettings["tipBaze"].Equals("inMemory"))
                 channel.CitanjeInMemoryBaze(out procitaniPodaci);
 
+            //if(procitaniPodaci != null)
             //izvrsenje proracuna za svaki podatak
             foreach (Load podatak in procitaniPodaci)
             {

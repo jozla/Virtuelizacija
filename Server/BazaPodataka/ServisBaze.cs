@@ -171,11 +171,6 @@ namespace BazaPodataka
                 auditBaza.Add(audit.Id, audit);
                 importedBaza.Add(audit.Id, impf);
             }
-            
-            if(audit == null)
-            {
-                Console.WriteLine(1);
-            }
         }
 
         //inicijalni id za load objekte
